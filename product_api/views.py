@@ -51,3 +51,18 @@ class CartViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         instance.delete()
 
+
+class OrderViewset(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        

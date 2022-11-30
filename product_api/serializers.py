@@ -4,7 +4,7 @@ from product_api.models import *
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'quantity', 'photo']
+        fields = ['id','name', 'description', 'price', 'quantity', 'photo']
         extra_kwargs = {'photo': {'required': False}}
         depth = 1
 
@@ -72,4 +72,30 @@ class CartSerializer(serializers.ModelSerializer):
 
     def delete(self, instance):
         instance.delete()
+        return instance
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=SiteUser.objects.all())
+    items = CartItemSerializer(many=True)
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'items', 'status', 'date', 'address']
+        depth = 1
+
+    def create(self, validated_data):
+        user = validated_data.get('user')
+        items = validated_data.get('items')
+        address = validated_data.get('address')
+        order = Order.objects.create(user=user, address=address)
+        for item in items:
+            new_item = CartItem.objects.create(product=item['product'], quantity=item['quantity'])
+            order.items.add(new_item)
+
+        order.save()
+        return order
+    
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
         return instance

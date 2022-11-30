@@ -8,7 +8,6 @@ class Product(models.Model):
     description = models.TextField()
     photo = models.ImageField(upload_to='products', null=True, blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    quantity = models.IntegerField()
 
 
     def __str__(self):
@@ -89,3 +88,22 @@ class Cart(models.Model):
             product.save()
         self.clear()
 
+# order status choices
+ORDER_STATUS = (
+    ('Pending', 'Pending'),
+    ('Delivered', 'Delivered'),
+    ('Cancelled', 'Cancelled'),
+)
+
+
+class Order(models.Model):
+    user = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
+    items = models.ManyToManyField(CartItem)
+    address = models.CharField(max_length=200)
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default='Pending')
+
+    def __str__(self):
+        return str(self.user.username) + ' - ' + str(self.date)
+
+    
