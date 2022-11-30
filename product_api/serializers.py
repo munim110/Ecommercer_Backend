@@ -4,7 +4,7 @@ from product_api.models import *
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id','name', 'description', 'price', 'quantity', 'photo']
+        fields = ['id','name', 'description', 'price', 'photo']
         extra_kwargs = {'photo': {'required': False}}
         depth = 1
 
