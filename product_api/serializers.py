@@ -78,9 +78,11 @@ class CartSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=SiteUser.objects.all())
     items = CartItemSerializer(many=True)
+    extra_kwargs = {'status': {'required': False}, 'total': {'read_only': True}}
+
     class Meta:
         model = Order
-        fields = ['id', 'user', 'items', 'status', 'date', 'address']
+        fields = ['id', 'user', 'items', 'status', 'date', 'address','total']
         depth = 1
 
     def create(self, validated_data):
@@ -91,7 +93,7 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in items:
             new_item = CartItem.objects.create(product=item['product'], quantity=item['quantity'])
             order.items.add(new_item)
-
+        order.set_order_total()
         order.save()
         return order
     

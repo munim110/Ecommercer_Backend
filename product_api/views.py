@@ -56,7 +56,7 @@ class OrderViewset(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['user__username']
+    search_fields = ['=user__username']
     # permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
