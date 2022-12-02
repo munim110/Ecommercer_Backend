@@ -1,11 +1,12 @@
 from django.db import models
 from user_api.models import SiteUser
+from datetime import datetime
 
 # Create your models here.
 
 def upload_location(instance, filename):
     filebase, extension = filename.split('.')
-    return 'products/%s.%s' % (str(instance.id), extension)
+    return 'products/%s_%s.%s' % (str(instance.id),str(datetime.now()) , extension)
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
